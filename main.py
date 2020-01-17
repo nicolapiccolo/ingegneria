@@ -7,7 +7,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-PATH = '/Users/nicopiccolo/Desktop/monumenti'
+PATH = 'monumenti'
 
 train_dir = os.path.join(PATH, 'train')
 validation_dir = os.path.join(PATH, 'test')
