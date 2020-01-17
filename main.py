@@ -128,7 +128,6 @@ pred = model.predict_generator(val_data_gen,
 predicted_class_indices = np.argmax(pred, axis=1)
 
 
-
 labels = (train_data_gen.class_indices)
 print(labels)
 labels = dict((v,k) for k,v in labels.items())
@@ -137,3 +136,4 @@ predictions = [labels[k] for k in predicted_class_indices]
 # for i in range(yp.size):
 print(predictions)
 
+print('prova')
