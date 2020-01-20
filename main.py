@@ -7,6 +7,8 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+
 PATH = 'monumenti'
 
 train_dir = os.path.join(PATH, 'train')
@@ -135,5 +137,7 @@ predictions = [labels[k] for k in predicted_class_indices]
 
 # for i in range(yp.size):
 print(predictions)
+
+
 
 print('prova')
