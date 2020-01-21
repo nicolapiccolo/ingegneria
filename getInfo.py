@@ -13,7 +13,7 @@ import scipy as sci
 import matplotlib.pyplot as plt
 import matplotlib.image as mpim
 
-from keras.models import load_model
+
 from keras.preprocessing import image
 
 """"
@@ -74,14 +74,18 @@ plt.show()
 loaded_model = tf.keras.models.load_model('monumenti.h5')
 print(loaded_model.layers[0].input_shape) #(None, 160, 160, 3)
 
-image_path="/Users/nicopiccolo/Desktop/proba/12.jpg"
+image_path="monumenti/test/vittoriano/14.jpg"
 img = image.load_img(image_path, target_size=(64, 64))
 plt.imshow(img)
 img = np.expand_dims(img, axis=0)
 np_image = np.array(img).astype('float32') / 255
 pred=loaded_model.predict_classes(np_image)
 print(pred)
+print(Dataset.getLabel(pred[0]))
 plt.show()
+
+
+
 
 
 

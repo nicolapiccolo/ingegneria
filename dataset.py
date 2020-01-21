@@ -2,7 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
+import pandas as pd
 class Dataset:
     PATH = ''
 
@@ -14,6 +14,12 @@ class Dataset:
 
     batch_train = 0
     batch_test = 0
+
+    @classmethod
+    def getLabel(cls,index):
+        df=pd.read_csv("label.csv")
+        return df["Monumenti"][index]
+
 
 
 
