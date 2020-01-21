@@ -1,9 +1,11 @@
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from PIL import Image
 
 import os
 import numpy as np
+import scipy as sci
 import matplotlib.pyplot as plt
 from dataset import Dataset
 
@@ -29,7 +31,7 @@ class Riconoscitore:
         ])
         self.compileModel()
         self.fitModel(train,test,epochs)
-        self.predictImg(test)
+
 
 
     def compileModel(self):
@@ -50,6 +52,22 @@ class Riconoscitore:
             validation_steps=total_test // batch_test
         )
 
+    def predictImage(self,path):
+        img = self.loadImg(path)
+        imgplot = plt.imshow(img)
+        plt.show()
+        predict = self.model.predict(img)
+        print(predict)
+
+
+
+    def loadImg(self,filename):
+        np_image = Image.open(filename)
+        new_image = np_image.resize((self.dataset.IMG_WIDTH, self.dataset.IMG_HEIGHT))
+        np_image = np.array(new_image).astype('float32') / 255
+        np_image = np_image.reshape((64,64,3))
+        return np_image
+
     def predictImg(self,test_data):
 
         STEP_SIZE_TEST = test_data.n // test_data.batch_size
@@ -67,7 +85,11 @@ class Riconoscitore:
 
         # for i in range(yp.size):
         self.dataset.showTest(test_data)
-        print(predictions)
+        return predictions
+
+    def saveModel(self,name):
+        self.model.save(name)
+
 
 
 
