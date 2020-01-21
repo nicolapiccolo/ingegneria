@@ -48,7 +48,7 @@ class Dataset:
         test_image_generator = ImageDataGenerator(rescale=1. / 255)  # Generator for our training data
         test_data_gen = test_image_generator.flow_from_directory(batch_size=self.batch_test,
                                                                    directory=test_dir,
-                                                                   shuffle=True,
+                                                                    shuffle=True,
                                                                    target_size=(self.IMG_HEIGHT,self.IMG_WIDTH),
                                                                    class_mode='categorical')
         return test_data_gen

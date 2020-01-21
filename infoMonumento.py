@@ -2,6 +2,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 import pandas as pd
 
 WD = "https://query.wikidata.org/sparql"
+DB = "http://dbpedia.org/sparql"
 
 
 
