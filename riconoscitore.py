@@ -17,7 +17,6 @@ class Riconoscitore:
     def __init__(self,dataset,epochs):
         self.dataset = dataset
         train = dataset.getTrainImage()
-        test = dataset.getTestImage()
         self.model = Sequential([
             Conv2D(16, 3, padding='same', activation='relu', input_shape=(dataset.IMG_HEIGHT,dataset.IMG_WIDTH, 3)),
             MaxPooling2D(),
@@ -30,7 +29,7 @@ class Riconoscitore:
             Dense(train.num_classes, activation='softmax')
         ])
         self.compileModel()
-        self.fitModel(train,test,epochs)
+        self.fitModel(train,epochs)
 
 
 
@@ -39,17 +38,13 @@ class Riconoscitore:
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
 
-    def fitModel(self,train,test,epochs):
+    def fitModel(self,train,epochs):
         total_train = train.samples
-        total_test = train.samples
         batch_train = train.batch_size
-        batch_test = test.batch_size
         self.model.fit_generator(
             train,
             steps_per_epoch=total_train // batch_train,
             epochs=epochs,
-            validation_data=test,
-            validation_steps=total_test // batch_test
         )
 
     def predictImage(self,path):
