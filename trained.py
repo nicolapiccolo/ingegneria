@@ -16,7 +16,7 @@ import matplotlib.image as mpim
 from keras.models import load_model
 from keras.preprocessing import image
 
-data = Dataset('/Users/nicopiccolo/Desktop/monunosf',5,1)
+data = Dataset('monumenti',5,1)
 
 r = Riconoscitore(data,15)
 r.saveModel('monumenti.h5')
