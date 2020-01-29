@@ -95,7 +95,7 @@ class Info:
 
     def getDataOpening(self):
         query = f"SELECT ?data WHERE {{ <{self.uri}> wdt:P1619 ?data }}"
-        print(query)
+        #print(query)
         results = self.setQuery(query, WD)
         s = len(results["results"]["bindings"])
         if s<=0:
@@ -127,9 +127,115 @@ class Info:
         #print(use)
         return use
 
+    def getPeriod(self):
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P2348 ?period. ?period rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        #print(query)
+        results = self.setQuery(query, WD)
+        period = ''
+        for result in results["results"]["bindings"]:
+            period+= " " + (result["name"]["value"])
+        #print(use)
+        return period
 
+    def getReligion(self):
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P140 ?religion. ?religion rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        #print(query)
+        results = self.setQuery(query, WD)
+        religion = ''
+        for result in results["results"]["bindings"]:
+            religion+= " " + (result["name"]["value"])
+        #print(use)
+        return religion
 
+    def getDiocese(self):
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P708 ?diocese. ?diocese rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        #print(query)
+        results = self.setQuery(query, WD)
+        diocese = ''
+        for result in results["results"]["bindings"]:
+            diocese+= " " + (result["name"]["value"])
+        #print(use)
+        return diocese
 
+    def getPosition(self):
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P276 ?position. ?position rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        #print(query)
+        results = self.setQuery(query, WD)
+        position = ''
+        for result in results["results"]["bindings"]:
+            position+= " " + (result["name"]["value"])
+        #print(use)
+        return position
+
+    def getCountry(self):
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P17 ?country. ?country rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        #print(query)
+        results = self.setQuery(query, WD)
+        country = ''
+        for result in results["results"]["bindings"]:
+            country+= " " + (result["name"]["value"])
+
+        return country
+
+    def getRegion(self):
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P131 ?region. ?region rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        #print(query)
+        results = self.setQuery(query, WD)
+        region = ''
+        for result in results["results"]["bindings"]:
+            region+= " " + (result["name"]["value"])
+
+        return region
+
+    def getHeight(self):
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P2048 ?height. ?height rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        #print(query)
+        results = self.setQuery(query, WD)
+        height = ''
+        for result in results["results"]["bindings"]:
+            height+= " " + (result["name"]["value"])
+
+        return height
+
+    def getWidth(self):
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P2049 ?width. ?width rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        #print(query)
+        results = self.setQuery(query, WD)
+        width = ''
+        for result in results["results"]["bindings"]:
+            width+= " " + (result["name"]["value"])
+
+        return width
+
+    def getWebsite(self):
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P856 ?website. ?website rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        #print(query)
+        results = self.setQuery(query, WD)
+        website = ''
+        for result in results["results"]["bindings"]:
+            website+= " " + (result["name"]["value"])
+
+        return website
+
+    def getArchitect(self):
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P84 ?architect. ?architect rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        #print(query)
+        results = self.setQuery(query, WD)
+        architect = ''
+        for result in results["results"]["bindings"]:
+            architect+= " " + (result["name"]["value"])
+
+        return architect
+
+    def getStart(self):
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P571 ?start. ?start rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        #print(query)
+        results = self.setQuery(query, WD)
+        start = ''
+        for result in results["results"]["bindings"]:
+            start+= " " + (result["name"]["value"])
+
+        return start
 
 
 
