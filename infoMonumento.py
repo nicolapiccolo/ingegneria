@@ -94,7 +94,7 @@ class Info:
         return style
 
     def getDataOpening(self):
-        query = f"SELECT ?data WHERE {{ <{self.uri}> wdt:P1619 ?data }}"
+        query = f"SELECT ?d ?m ?y WHERE {{ <{self.uri}> wdt:P1619 ?data.  BIND (year(?data) AS ?y) BIND (month(?data) AS ?m) BIND (day(?data) AS ?d)}}"
         #print(query)
         results = self.setQuery(query, WD)
         s = len(results["results"]["bindings"])
@@ -103,7 +103,7 @@ class Info:
             results = self.setQuery(query, WD)
         dt = ""
         for result in results["results"]["bindings"]:
-            dt = result["data"]["value"]
+            dt = result["d"]["value"] + "/" + result["m"]["value"] + "/" + result["y"]["value"]
         #print(dt)
         return dt
 
@@ -115,6 +115,12 @@ class Info:
         for result in results["results"]["bindings"]:
             visitors = result["visit"]["value"]
         #print(visitors)
+        i = len(visitors)
+        v=i
+        while v>0:
+            if v!=i: visitors = visitors[:v] + "." + visitors[v:]
+            v = v-3
+
         return visitors
 
     def getUse(self):
