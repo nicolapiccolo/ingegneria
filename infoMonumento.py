@@ -10,9 +10,17 @@ class Info:
 
     instanceof = "P31"
     uri = ""
-    def __init__(self, nome):
-        self.nome = nome
-        self.uri = self.getUri()
+    def __init__(self,nome,uri):
+        if len(uri) < 1:
+            self.nome = nome
+            self.uri = self.getUri()
+        else:
+            self.nome = self.getName()
+            self.uri = uri
+
+
+
+
 
 
     def setQuery(self,query,wrapper):
@@ -29,7 +37,7 @@ class Info:
                 "?uri dbo:abstract ?o " \
                 "FILTER(lang(?o)='it')" \
                 "}"
-        # print(query)
+        #print(query)
         results = self.setQuery(query, DB)
         description = ''
         for result in results["results"]["bindings"]:
@@ -194,32 +202,32 @@ class Info:
         return region
 
     def getHeight(self):
-        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P2048 ?height. ?height rdfs:label ?name. FILTER(lang(?name)='it') }}"
-        #print(query)
+        query = f"SELECT ?height  WHERE {{ <{self.uri}> wdt:P2048 ?height }}"
+        print(query)
         results = self.setQuery(query, WD)
         height = ''
         for result in results["results"]["bindings"]:
-            height+= " " + (result["name"]["value"])
+            height+= " " + (result["height"]["value"])
 
         return height
 
     def getWidth(self):
-        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P2049 ?width. ?width rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        query = f"SELECT ?width  WHERE {{ <{self.uri}> wdt:P2049 ?width }}"
         #print(query)
         results = self.setQuery(query, WD)
         width = ''
         for result in results["results"]["bindings"]:
-            width+= " " + (result["name"]["value"])
+            width+= " " + (result["width"]["value"])
 
         return width
 
     def getWebsite(self):
-        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P856 ?website. ?website rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        query = f"SELECT ?website  WHERE {{ <{self.uri}> wdt:P856 ?website }}"
         #print(query)
         results = self.setQuery(query, WD)
         website = ''
         for result in results["results"]["bindings"]:
-            website+= " " + (result["name"]["value"])
+            website+= " " + (result["website"]["value"])
 
         return website
 
@@ -232,16 +240,16 @@ class Info:
             architect+= " " + (result["name"]["value"])
 
         return architect
-
-    def getStart(self):
-        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P571 ?start. ?start rdfs:label ?name. FILTER(lang(?name)='it') }}"
-        #print(query)
+    def getName(self):
+        query=f"SELECT ?name WHERE {{<{self.uri}> rdfs:label ?name. FILTER(lang(?name)='it') }}"
         results = self.setQuery(query, WD)
-        start = ''
+        name = ''
         for result in results["results"]["bindings"]:
-            start+= " " + (result["name"]["value"])
+            name = result["name"]["value"]
+            # print(uri)
+        return name
 
-        return start
+
 
 
 
