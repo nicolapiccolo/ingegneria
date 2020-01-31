@@ -2,6 +2,8 @@ import numpy as np
 from SPARQLWrapper import SPARQLWrapper, JSON
 import csv
 import pandas as pd
+import time
+import urllib
 
 WD = "https://query.wikidata.org/sparql"
 DB = "http://dbpedia.org/sparql"
@@ -18,8 +20,14 @@ class Neighbors:
         sparql = SPARQLWrapper(wrapper)
         sparql.setQuery(query)
         sparql.setReturnFormat(JSON)
-        results = sparql.query().convert()
-        return results["results"]["bindings"]
+        while True:
+            i = 1
+            try:
+                results = sparql.query().convert()
+                return results["results"]["bindings"]
+            except urllib.error.HTTPError:
+                time.sleep(i)
+                i += 1
 
     def writeCSV(self,res):
 
