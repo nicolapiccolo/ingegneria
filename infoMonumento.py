@@ -1,5 +1,7 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 import pandas as pd
+import urllib
+import time
 
 WD = "https://query.wikidata.org/sparql"
 DB = "http://dbpedia.org/sparql"
@@ -22,26 +24,35 @@ class Info:
 
 
 
-
+    """
     def setQuery(self,query,wrapper):
         sparql = SPARQLWrapper(wrapper)
         sparql.setQuery(query)
         sparql.setReturnFormat(JSON)
         results = sparql.query().convert()
         return results
+    """
+
+    def setQuery(self, query, wrapper):
+        sparql = SPARQLWrapper(wrapper)
+        sparql.setQuery(query)
+        sparql.setReturnFormat(JSON)
+        while True:
+            i = 1
+            try:
+                results = sparql.query().convert()
+                return results
+            except urllib.error.HTTPError:
+                time.sleep(i)
+                i += 1
 
     def getDescription(self):
-        query = "SELECT ?o " \
-                "WHERE { " \
-                "?uri rdfs:label '" + self.nome + "'@it. " \
-                "?uri dbo:abstract ?o " \
-                "FILTER(lang(?o)='it')" \
-                "}"
-        #print(query)
+        query = f"PREFIX wd: <http://www.wikidata.org/entity/> select ?descr where {{ ?uri owl:sameAs <{self.uri}>. ?uri dbo:abstract ?descr. FILTER(lang(?descr)='it') }}"
+        print(query)
         results = self.setQuery(query, DB)
         description = ''
         for result in results["results"]["bindings"]:
-            description = result["o"]["value"]
+            description = result["descr"]["value"]
         return description
 
 
@@ -61,14 +72,19 @@ class Info:
         return uri
 
     def getAddress(self):
-        query = f"SELECT ?cname ?addr  WHERE {{ <{self.uri}> wdt:P17 ?country. ?country rdfs:label ?cname. <{self.uri}> wdt:P6375 ?addr. FILTER(lang(?cname)='it') }}"
-        #print(query)
-        results = self.setQuery(query,WD)
-        addr = ''
-        for result in results["results"]["bindings"]:
-            addr = result["addr"]["value"] +" -- "+ result["cname"]["value"]
-        #print(addr)
-        return addr
+        try:
+            query = f"SELECT ?cname ?addr  WHERE {{ <{self.uri}> wdt:P17 ?country. ?country rdfs:label ?cname. <{self.uri}> wdt:P6375 ?addr. FILTER(lang(?cname)='it') }}"
+            # print(query)
+            results = self.setQuery(query, WD)
+            addr = ''
+            for result in results["results"]["bindings"]:
+                addr = result["addr"]["value"] + " -- " + result["cname"]["value"]
+            # print(addr)
+            return addr
+        except urllib.error.HTTPError as e:
+            print(e.reason)
+        return ''
+
 
     def getCulture(self):
         query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P2596 ?culture. ?culture rdfs:label ?name. FILTER(lang(?name)='it') }}"
@@ -222,7 +238,7 @@ class Info:
         return width
 
     def getWebsite(self):
-        query = f"SELECT ?website  WHERE {{ <{self.uri}> wdt:P856 ?website }}"
+        query = f"SELECT ?website  WHERE {{ <{self.uri}> wdt:P856 ?website }} LIMIT 1"
         #print(query)
         results = self.setQuery(query, WD)
         website = ''
