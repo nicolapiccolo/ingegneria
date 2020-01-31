@@ -67,6 +67,8 @@ def getAllProps(monumento):
     time.sleep(1)
     props.append(["Nazione",monumento.getCountry()])
     time.sleep(1)
+    props.append(["Regione",monumento.getRegion()])
+    time.sleep(1)
     props.append(["Posizione",monumento.getPosition()])
     time.sleep(1)
     props.append(["Data apertura",monumento.getDataOpening()])
@@ -74,8 +76,6 @@ def getAllProps(monumento):
     props.append(["Altezza",monumento.getHeight()])
     time.sleep(1)
     props.append(["Larghezza",monumento.getWidth()])
-    time.sleep(1)
-    props.append(["Inizio",monumento.getStart()])
     time.sleep(1)
     props.append(["Sito Web",monumento.getWebsite()])
     time.sleep(1)
@@ -110,7 +110,7 @@ photo = openImg(path)
 tk.Label(frame1, image=photo).grid(row=0, column=0)
 
 monu = Dataset.getLabel(predict(path,loaded_model)[0])
-monumento = Info(monu)
+monumento = Info(monu,'')
 
 master.title("MonumentInfo: " + monu)
 
@@ -130,8 +130,11 @@ nn = Neighbors()
 #print(nn.getAllUri(monumento.uri))
 
 vicini = nn.getAllUri(monumento.uri)
+mon1 = Info('',vicini[0])
 print(vicini[0])
+mon2 = Info('',vicini[1])
 print(vicini[1])
+mon3 = Info('',vicini[2])
 print(vicini[2])
 
 photo1 = openImgURl(nn.getImage(vicini[0]))
@@ -140,19 +143,19 @@ photo2 = openImgURl(nn.getImage(vicini[1]))
 time.sleep(1)
 photo3 = openImgURl(nn.getImage(vicini[2]))
 
-im1 = tk.Label(frame3, text=vicini[0], relief=tk.RIDGE, width=50, cursor="hand2")
+im1 = tk.Label(frame3, text=mon1.getName(), relief=tk.RIDGE, width=50, cursor="hand2")
 im1.grid(row=0, column=0)
 im1.bind("<Button-1>", lambda e: callback(vicini[0]))
 
 tk.Label(frame3, image=photo1).grid(row=1, column=0, pady=20)
 
-im2 = tk.Label(frame3, text=vicini[1], relief=tk.RIDGE, width=50, cursor="hand2")
+im2 = tk.Label(frame3, text=mon2.getName(), relief=tk.RIDGE, width=50, cursor="hand2")
 im2.grid(row=2, column=0)
 im2.bind("<Button-1>", lambda e: callback(vicini[1]))
 
 tk.Label(frame3, image=photo2).grid(row=3, column=0, pady=20)
 
-im3 = tk.Label(frame3, text=vicini[2], relief=tk.RIDGE, width=50,cursor="hand2")
+im3 = tk.Label(frame3, text=mon3.getName(), relief=tk.RIDGE, width=50,cursor="hand2")
 im3.grid(row=4, column=0)
 im3.bind("<Button-1>", lambda e: callback(vicini[2]))
 
