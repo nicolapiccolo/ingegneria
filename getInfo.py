@@ -12,76 +12,113 @@ import numpy as np
 import scipy as sci
 import matplotlib.pyplot as plt
 import matplotlib.image as mpim
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
 
 
 from keras.preprocessing import image
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+# scikit-learn k-fold cross-validation
+from numpy import array, indices
+import os
+from sklearn.model_selection import StratifiedKFold
 
-""""
-query = "SELECT ?uri ?pp WHERE { ?uri rdfs:label 'colosseo'@it. ?uri wdt:P186 ?op. ?op rdfs:label ?pp  FILTER (lang(?pp)='it')}"
-
-colosseo = Info("Colosseo")
-
-colosseo.getAddress()
-colosseo.getCulture()
-colosseo.getMaterial()
-colosseo.getStyle()
-colosseo.getUse()
-colosseo.getDataOpening()
-colosseo.getVisitors()
-"""
+dir_path = "/Users/nicopiccolo/Desktop/validation"
+generator = ImageDataGenerator(
+        rescale=1./255,
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True)
 
 
-#results_df[['item.value', 'itemLabel.value']].head()
+gen = generator.flow_from_directory(dir_path,batch_size=3,shuffle=True,target_size=(64,64),class_mode='categorical')
+#val_gen = generator.flow_from_directory(dir_path,batch_size=3,shuffle=True,target_size=(64,64),class_mode='categorical', subset='validation')
 
-#for result in results["results"]["bindings"]:
- #   print(result["uri"]["value"] + "    " + result["pp"]["value"])
-"""
-
-sparqlwd = SPARQLWrapper("https://query.wikidata.org/sparql")
-myid = "wd:Q22673982"
-sparqlwd.setQuery(f"SELECT ?s ?p WHERE {{?s ?p {myid} .}}")
-sparqlwd.setReturnFormat(JSON)
-results = sparqlwd.query().convert()
-print(results)
-results_df = pd.io.json.json_normalize(results['results']['bindings'])
-print(results_df)
-"""
+X=[]
+Y=[]
+root = dir_path
+i = 0
+for path, subdirs, files in os.walk(root):
+    for name in files:
+        if not name.startswith('.'):
+            X.append(os.path.join(path, name))
+            Y.append(str(i))
+    i+=1
 
 
-loaded_model = tf.keras.models.load_model('monumenti.h5')
-#print(loaded_model.layers[0].input_shape) #(None, 160, 160, 3)
+X = np.array(X)
+Y = np.array(Y)
+#dataset = pd.DataFrame({'label': Y, 'images': list(X)}, columns=['label', 'images'])
+#print(dataset)
 
-image_path="monumenti/test/9.jpg"
-img = image.load_img(image_path, target_size=(64, 64))
-plt.imshow(img)
-img = np.expand_dims(img, axis=0)
-np_image = np.array(img).astype('float32') / 255
-pred=loaded_model.predict_classes(np_image)
-plt.show()
+cvscores=[]
+kfold = StratifiedKFold(n_splits=8, shuffle=True, random_state=7)
+cvscores = []
+for train, test in kfold.split(X,Y):
 
-monu = Dataset.getLabel(pred[0])
+    X_train = np.array(X[train])
+    Y_train = np.array(Y[train])
 
-#print(monu)
+    X_test = np.array(X[test])
+    Y_test = np.array(Y[test])
 
-monumento = Info(monu)
-print("Descrizione: " + monumento.getDescription())
-print("Indirizzo: " + monumento.getAddress())
-print("Cultura: " + monumento.getCulture())
-print("Materiali usati: " + monumento.getMaterial())
-print("Data apertura: " + monumento.getDataOpening())
-print("Uso: " + monumento.getUse())
-print("Stile: " + monumento.getStyle())
-print("Visitatori annuali: " + monumento.getVisitors())
-print("Architetto:" + monumento.getArchitect())
-print("Epoca: " + monumento.getPeriod())
-print("Religione: " + monumento.getReligion())
-print("Diocesi: " + monumento.getDiocese())
-print("Posizione: " + monumento.getPosition())
-print("Nazione:" + monumento.getCountry())
-print("Regione:" + monumento.getRegion())
-print("Altezza:" + monumento.getHeight())
-print("Larghezza:" + monumento.getWidth())
-print("Sito Web:" + monumento.getWebsite())
-print("Inizio:" + monumento.getStart())
+    #print(X1)
+    train = pd.DataFrame({'label': Y_train, 'images': list(X_train)}, columns=['label', 'images'])
+    test = pd.DataFrame({'label': Y_test, 'images': list(X_test)}, columns=['label', 'images'])
+
+    #print(dataset)
 
 
+
+    train_generator = generator.flow_from_dataframe(
+        dataframe=train,
+        x_col="images",
+        y_col="label",
+        target_size=(64, 64),
+        batch_size=3,
+        class_mode='categorical')
+
+    test_generator = generator.flow_from_dataframe(
+        dataframe=test,
+        x_col="images",
+        y_col="label",
+        target_size=(64, 64),
+        batch_size=1,
+        class_mode='categorical')
+
+    model = Sequential([
+        Conv2D(16, 3, padding='same', activation='relu', input_shape=(64, 64, 3)),
+        MaxPooling2D(),
+        Conv2D(32, 3, padding='same', activation='relu'),
+        MaxPooling2D(),
+        Conv2D(64, 3, padding='same', activation='relu'),
+        MaxPooling2D(),
+        Flatten(),
+        Dense(512, activation='relu'),
+        Dense(10, activation='softmax')
+    ])
+
+    model.compile(optimizer='adam',
+                  loss='binary_crossentropy',
+                  metrics=['accuracy'])
+
+    total_train = train_generator.samples
+    batch_train = train_generator.batch_size
+
+
+    total_val = test_generator.samples
+    batch_val = test_generator.batch_size
+
+    model.fit_generator(
+        train_generator,
+        steps_per_epoch=total_train // batch_train,
+        epochs=15,
+        validation_data=test_generator,
+        validation_steps=total_val // batch_val
+    )
+
+    scores = model.evaluate_generator(test_generator, 5, max_queue_size=10, workers=1)
+    print("%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
+    cvscores.append(scores[1] * 100)
+
+print("%.2f%% (+/- %.2f%%)" % (np.mean(cvscores), np.std(cvscores)))

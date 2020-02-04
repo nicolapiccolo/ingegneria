@@ -64,7 +64,7 @@ class Neighbors:
 
     def getAllUri(self,uri):
         tr = self.dataset.loc[self.dataset['URI']==uri]
-        print(tr)
+        #print(tr)
         neighbors = self.get_neighbors(self.dataset, tr, 3, distance=self.distance)
         uris = []
         for n in neighbors:
