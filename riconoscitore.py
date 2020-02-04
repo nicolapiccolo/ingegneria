@@ -38,6 +38,7 @@ class Riconoscitore:
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
 
+
     def fitModel(self,train,epochs):
         total_train = train.samples
         batch_train = train.batch_size
@@ -46,6 +47,7 @@ class Riconoscitore:
             steps_per_epoch=total_train // batch_train,
             epochs=epochs,
         )
+
 
     def predictImage(self,path):
         img = self.loadImg(path)
