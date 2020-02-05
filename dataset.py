@@ -3,35 +3,47 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import pandas as pd
+
+
 class Dataset:
     PATH = ''
-
-    train_dir = ''
-    validation_dir = ''
 
     IMG_HEIGHT = 64
     IMG_WIDTH = 64
 
+    generator = ''
+    train_gen = ''
+    val_gen = ''
     batch_train = 0
-    batch_test = 0
+    batch_val = 0
 
     @classmethod
-    def getLabel(cls,index):
-        df=pd.read_csv("label.csv")
+    def getLabel(cls, index):
+        df = pd.read_csv("label.csv")
         return df["Monumenti"][index]
 
-
-
-
-    def __init__(self,path,batch_train,batch_test):
+    def __init__(self, path, batch_train, batch_val):
         self.PATH = path
         self.batch_train = batch_train
-        self.batch_test = batch_test
+        self.batch_val = batch_val
 
+        self.generator = ImageDataGenerator(
+            rescale=1. / 255,
+            shear_range=0.2,
+            zoom_range=0.2,
+            horizontal_flip=True,
+            validation_split=0.1)
 
+        self.train_gen = self.generator.flow_from_directory(path, batch_size=batch_train, shuffle=True,
+                                                            target_size=(64, 64),
+                                                            class_mode='categorical', subset='training')
 
-    def plotImages(self,images_arr):
-        fig, axes = plt.subplots(1, 3, figsize=(10,10))
+        self.val_gen = self.generator.flow_from_directory(path, batch_size=batch_val, shuffle=True,
+                                                          target_size=(64, 64),
+                                                          class_mode='categorical', subset='validation')
+
+    def plotImages(self, images_arr):
+        fig, axes = plt.subplots(1, 3, figsize=(10, 10))
         axes = axes.flatten()
         for img, ax in zip(images_arr, axes):
             ax.imshow(img)
@@ -40,29 +52,11 @@ class Dataset:
         plt.show()
 
     def getTrainImage(self):
-        train_dir = os.path.join(self.PATH, 'train')
-        train_image_generator = ImageDataGenerator(rescale=1. / 255)  # Generator for our training data
-        train_data_gen = train_image_generator.flow_from_directory(batch_size=self.batch_train,
-                                                                   directory=train_dir,
-                                                                   shuffle=True,
-                                                                   target_size=(self.IMG_HEIGHT,self.IMG_WIDTH),
-                                                                   class_mode='categorical')
-        return train_data_gen
+        return self.train_gen
 
     def getTestImage(self):
-        test_dir = os.path.join(self.PATH, 'test')
-        test_image_generator = ImageDataGenerator(rescale=1. / 255)  # Generator for our training data
-        test_data_gen = test_image_generator.flow_from_directory(batch_size=self.batch_test,
-                                                                   directory=test_dir,
-                                                                    shuffle=True,
-                                                                   target_size=(self.IMG_HEIGHT,self.IMG_WIDTH),
-                                                                   class_mode='categorical')
-        return test_data_gen
+        return self.val_gen
 
-    def showTest(self,test_data):
-        sample_test_images, _ = next(test_data)
-        self.plotImages(sample_test_images[:self.batch_test])
-
-
-
-
+    def showTest(self):
+        sample_test_images, _ = next(self.getTestImage())
+        self.plotImages(sample_test_images[:self.batch_val])

@@ -90,7 +90,7 @@ root = tk.Tk()
 root.geometry("1000x650")
 
 
-loaded_model = tf.keras.models.load_model('model.h5')
+loaded_model = tf.keras.models.load_model('mymodel.h5')
 
 
 frame1=tk.Frame(root, width=200,background="#1976d2",borderwidth=10, relief=tk.GROOVE)
