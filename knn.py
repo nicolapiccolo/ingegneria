@@ -15,6 +15,20 @@ class Neighbors:
     def __init__(self):
         self.dataset = pd.read_csv(DD)
 
+    def refreshCSV(self):
+        query = """select ?uri ?lat ?lon
+        where{
+        ?uri wdt:P31 wd:Q570116.
+        ?uri wdt:P17 ?p.
+        ?uri wdt:P625 ?geo.
+        FILTER (?p IN (wd:Q38,wd:Q237) )
+        bind( replace( str(?geo), "^[^0-9\\\.]*([0-9\\\.]+) .*$", "$1" ) as ?lon )
+        bind( replace( str(?geo), "^.* ([0-9\\\.]+)[^0-9\\\.]*$", "$1" ) as ?lat )
+        }"""
+        res = self.setQuery(query,WD)
+        self.writeCSV(res)
+
+
 
     def setQuery(self,query, wrapper):
         sparql = SPARQLWrapper(wrapper)
@@ -86,26 +100,6 @@ class Neighbors:
 
 
 
-
-
-
-
-
-
-query = """select ?uri ?lat ?lon
-where{
-?uri wdt:P31 wd:Q570116.
-?uri wdt:P17 wd:Q38.
-?uri wdt:P625 ?geo.
-bind( replace( str(?geo), "^[^0-9\\\.]*([0-9\\\.]+) .*$", "$1" ) as ?lon )
-bind( replace( str(?geo), "^.* ([0-9\\\.]+)[^0-9\\\.]*$", "$1" ) as ?lat )
-}"""
-
-
-#res = setQuery(query,WD)
-#writeCSV(res)
-#print (query)
-
 #dataset = pd.read_csv('monuments.csv')
 
 #tr = dataset.loc[dataset['URI'] == 'http://www.wikidata.org/entity/Q18068']
@@ -128,7 +122,6 @@ bind( replace( str(?geo), "^.* ([0-9\\\.]+)[^0-9\\\.]*$", "$1" ) as ?lat )
 
 #print(pp.values)
 #print(get_neighbors(dataset,tr,3,distance=distance))
-
 
 
 

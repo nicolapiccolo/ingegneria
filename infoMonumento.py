@@ -243,7 +243,7 @@ class Info:
         results = self.setQuery(query, WD)
         architect = ''
         for result in results["results"]["bindings"]:
-            architect+= "," + (result["name"]["value"])
+            architect+= "\n- " + (result["name"]["value"])
         return architect[1:]
 
     def getName(self):
