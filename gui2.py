@@ -1,5 +1,4 @@
 import tkinter as tk
-import urllib
 from tkinter import filedialog
 import PIL.ImageTk
 from PIL import ImageTk
@@ -15,13 +14,12 @@ import matplotlib.pyplot as plt
 
 
 from keras.preprocessing import image
-import time
+
 from urllib.request import urlopen
 import webbrowser
 
-import tkinter.font as tkFont
 
-from scrollPane import ScrollableFrame
+
 
 def on_configure(event):
     # update scrollregion after starting 'mainloop'
@@ -93,23 +91,24 @@ def getAllProps(monumento):
 
 
 root = tk.Tk()
-root.geometry("1000x750")
+root.geometry("1100x750")
 
 
 loaded_model = tf.keras.models.load_model('mymodel.h5')
+loaded_model.summary()
 
 
 frame1=tk.Frame(root, width=200,background="#1976d2",borderwidth=10, relief=tk.GROOVE)
-frame1.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
+frame1.pack(side=tk.LEFT, fill=tk.Y,expand=True)
 
 #frame2=ScrollableFrame(frame21, width=200,borderwidth=10, relief=tk.GROOVE)
 #frame2.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
 
-canvas = tk.Canvas(root,width=400,background="#1976d2")
+canvas = tk.Canvas(root,width=500,background="#1976d2",borderwidth=10, relief=tk.GROOVE)
 canvas.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
 
 scrollbar = tk.Scrollbar(root, command=canvas.yview)
-scrollbar.pack(side=tk.LEFT, fill=tk.BOTH)
+scrollbar.pack(side=tk.LEFT, fill=tk.Y)
 
 canvas.configure(yscrollcommand = scrollbar.set)
 
@@ -118,11 +117,11 @@ canvas.configure(yscrollcommand = scrollbar.set)
 canvas.bind('<Configure>', on_configure)
 
 # --- put frame in canvas ---
-frame2=tk.Frame(canvas, background="#1976d2",borderwidth=10, relief=tk.GROOVE)
+frame2=tk.Frame(canvas)
 canvas.create_window((0,0), window=frame2, anchor='nw')
 
 frame3=tk.Frame(root, width=150,background="#1976d2",borderwidth=10, relief=tk.GROOVE)
-frame3.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
+frame3.pack(side=tk.LEFT, fill=tk.Y,expand=True)
 
 
 path = filedialog.askopenfilename()
@@ -145,8 +144,8 @@ root.title("MonumentInfo: " + monu)
 
 d = monumento.getDescription()
 tk.Label(frame2, text="DESCRIZIONE: ",font=("Helvetica", 15,"bold")).pack(side=tk.TOP,fill=tk.BOTH)
-w = tk.Message(frame2, text=d,borderwidth=5, relief=tk.RAISED,aspect=100)
-w.pack(side=tk.TOP,fill=tk.X)
+w = tk.Message(frame2, text=d,borderwidth=5, relief=tk.RAISED,aspect=120,width=490)
+w.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
 
 
 

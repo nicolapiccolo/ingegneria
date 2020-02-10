@@ -3,7 +3,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from sklearn.model_selection import StratifiedKFold
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
+from tensorflow.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
 import numpy
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -39,7 +39,7 @@ class MyModel:
 
     def compileModel(self):
         self.model.compile(optimizer='adam',
-                      loss='binary_crossentropy',
+                      loss='mean_squared_error',
                       metrics=['accuracy'])
 
     def fitModel(self):

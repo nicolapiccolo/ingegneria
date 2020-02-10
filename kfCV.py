@@ -1,13 +1,6 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 import pandas as pd
 
-from infoMonumento import Info
-from dataset import Dataset
-from riconoscitore import Riconoscitore
-from PIL import Image
-
-import os
-import tensorflow as tf
 import numpy as np
 import scipy as sci
 import matplotlib.pyplot as plt
