@@ -21,6 +21,12 @@ import webbrowser
 
 import tkinter.font as tkFont
 
+from scrollPane import ScrollableFrame
+
+def on_configure(event):
+    # update scrollregion after starting 'mainloop'
+    # when all widgets are in canvas
+    canvas.configure(scrollregion=canvas.bbox('all'))
 
 def callback(url):
     webbrowser.open_new(url)
@@ -87,7 +93,7 @@ def getAllProps(monumento):
 
 
 root = tk.Tk()
-root.geometry("1000x650")
+root.geometry("1000x750")
 
 
 loaded_model = tf.keras.models.load_model('mymodel.h5')
@@ -96,10 +102,26 @@ loaded_model = tf.keras.models.load_model('mymodel.h5')
 frame1=tk.Frame(root, width=200,background="#1976d2",borderwidth=10, relief=tk.GROOVE)
 frame1.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
 
-frame2=tk.Frame(root, width=200,background="#1976d2",borderwidth=10, relief=tk.GROOVE)
-frame2.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
+#frame2=ScrollableFrame(frame21, width=200,borderwidth=10, relief=tk.GROOVE)
+#frame2.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
 
-frame3=tk.Frame(root, width=200,background="#1976d2",borderwidth=10, relief=tk.GROOVE)
+canvas = tk.Canvas(root,width=400,background="#1976d2")
+canvas.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
+
+scrollbar = tk.Scrollbar(root, command=canvas.yview)
+scrollbar.pack(side=tk.LEFT, fill=tk.BOTH)
+
+canvas.configure(yscrollcommand = scrollbar.set)
+
+# update scrollregion after starting 'mainloop'
+# when all widgets are in canvas
+canvas.bind('<Configure>', on_configure)
+
+# --- put frame in canvas ---
+frame2=tk.Frame(canvas, background="#1976d2",borderwidth=10, relief=tk.GROOVE)
+canvas.create_window((0,0), window=frame2, anchor='nw')
+
+frame3=tk.Frame(root, width=150,background="#1976d2",borderwidth=10, relief=tk.GROOVE)
 frame3.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
 
 
@@ -121,22 +143,12 @@ monumento = Info(monu,'')
 root.title("MonumentInfo: " + monu)
 
 
-"""
-i=0
-while i<10:
-    frmlbl = tk.Frame(frame2)
-    frmlbl.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-    tk.Label(frmlbl, text="ciao", relief=tk.RIDGE,).grid(row=i, column=0)
-    tk.Label(frmlbl, text='ciaop ciap',relief=tk.RIDGE,).grid(row=i, column=1)
-    i+=1
-#prop = getAllProps(monumento)
-r=0
-"""
-
-
 d = monumento.getDescription()
 tk.Label(frame2, text="DESCRIZIONE: ",font=("Helvetica", 15,"bold")).pack(side=tk.TOP,fill=tk.BOTH)
-w = tk.Message(frame2, text=d,borderwidth=5, relief=tk.RAISED).pack(side=tk.TOP,fill=tk.BOTH)
+w = tk.Message(frame2, text=d,borderwidth=5, relief=tk.RAISED,aspect=100)
+w.pack(side=tk.TOP,fill=tk.X)
+
+
 
 
 prop = getAllProps(monumento)
