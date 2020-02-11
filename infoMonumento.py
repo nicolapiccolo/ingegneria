@@ -32,7 +32,8 @@ class Info:
             try:
                 results = sparql.query().convert()
                 return results
-            except urllib.error.HTTPError:
+            except urllib.error.HTTPError as err:
+                print(err)
                 time.sleep(i)
                 i += 1
 
