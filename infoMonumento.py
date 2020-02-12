@@ -1,10 +1,11 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
-import pandas as pd
 import urllib
 import time
 
 WD = "https://query.wikidata.org/sparql"
 DB = "http://dbpedia.org/sparql"
+
+import sys
 
 
 
@@ -21,10 +22,11 @@ class Info:
             self.nome = self.getName()
             self.uri = uri
 
+    @classmethod
+    def setQuery(cls, query, wrapper):
 
-
-    def setQuery(self, query, wrapper):
-        sparql = SPARQLWrapper(wrapper)
+        user_agent = "MonumentInfo/%s.%s" % (sys.version_info[0], sys.version_info[1])
+        sparql = SPARQLWrapper(wrapper,agent=user_agent)
         sparql.setQuery(query)
         sparql.setReturnFormat(JSON)
         while True:
@@ -37,8 +39,17 @@ class Info:
                 time.sleep(i)
                 i += 1
 
+    def getWiki(self):
+        query = f"PREFIX foaf: <http://xmlns.com/foaf/0.1/> select ?descr where {{ ?uri owl:sameAs <{self.uri}>. ?uri foaf:isPrimaryTopicOf ?descr }} LIMIT 1"
+        print(query)
+        results = self.setQuery(query, DB)
+        description = ''
+        for result in results["results"]["bindings"]:
+            description = result["descr"]["value"]
+        return description
+
     def getDescription(self):
-        query = f"PREFIX wd: <http://www.wikidata.org/entity/> select ?descr where {{ ?uri owl:sameAs <{self.uri}>. ?uri dbo:abstract ?descr. FILTER(lang(?descr)='it') }}"
+        query = f"select ?descr where {{ ?uri owl:sameAs <{self.uri}>. ?uri dbo:abstract ?descr. FILTER(lang(?descr)='it') }}"
         print(query)
         results = self.setQuery(query, DB)
         description = ''
@@ -246,6 +257,23 @@ class Info:
         for result in results["results"]["bindings"]:
             architect+= "\n- " + (result["name"]["value"])
         return architect[1:]
+
+    def getGeolocation(self):
+        q1 = """select ?lat ?lon
+                where{ """
+
+        q2=  """ wdt:P625 ?geo.
+                bind( replace( str(?geo), "^[^0-9\\\.]*([0-9\\\.]+) .*$", "$1" ) as ?lon )
+                bind( replace( str(?geo), "^.* ([0-9\\\.]+)[^0-9\\\.]*$", "$1" ) as ?lat )
+                }"""
+        query = q1 + "<"+ self.uri +">"+ q2
+        print(query)
+        results = self.setQuery(query, WD)
+        loc = []
+        for result in results["results"]["bindings"]:
+            loc.append(result["lat"]["value"])
+            loc.append(result["lon"]["value"])
+        return loc
 
     def getName(self):
         if len(self.nome)==0:

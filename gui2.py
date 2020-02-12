@@ -5,7 +5,6 @@ from PIL import ImageTk
 from infoMonumento import Info
 from dataset import Dataset
 from knn import Neighbors
-from riconoscitore import Riconoscitore
 from PIL import Image
 
 import tensorflow as tf
@@ -128,18 +127,21 @@ path = filedialog.askopenfilename()
 print(path)
 photo = openImg(path)
 
+monu = Dataset.getLabel(predict(path,loaded_model)[0])
+monumento = Info(monu,'')
+
+root.title("MonumentInfo: " + monu)
+
+
 tk.Label(frame1, text="MONUMENTO SELEZIONATO:",font=("Helvetica", 15,"bold")).pack(side=tk.TOP,fill=tk.BOTH)
+tk.Label(frame1, text=monu,font=("Helvetica", 13,"bold")).pack(side=tk.TOP,fill=tk.BOTH)
+
 
 
 imglbl = tk.Label(frame1, image=photo)
 imglbl.pack(side=tk.TOP, fill=tk.BOTH,expand=True)
 
 
-monu = Dataset.getLabel(predict(path,loaded_model)[0])
-monumento = Info(monu,'')
-
-
-root.title("MonumentInfo: " + monu)
 
 
 d = monumento.getDescription()
@@ -188,6 +190,23 @@ mon2 = Info('',vicini[1])
 mon3 = Info('',vicini[2])
 #print(vicini[2])
 
+site1 = mon1.getWiki() or mon1.getWebsite()
+site2 = mon2.getWiki() or mon2.getWebsite()
+site3 = mon3.getWiki() or mon3.getWebsite()
+
+geo1 = mon1.getGeolocation()
+map1=f"https://maps.google.com/maps?q={geo1[0]},{geo1[1]}&hl=es;z=14&amp;output=embed"
+
+geo2 = mon2.getGeolocation()
+map2=f"https://maps.google.com/maps?q={geo2[0]},{geo2[1]}&hl=es;z=14&amp;output=embed"
+
+geo3 = mon3.getGeolocation()
+map3=f"https://maps.google.com/maps?q={geo3[0]},{geo3[1]}&hl=es;z=14&amp;output=embed"
+
+
+
+print(map1)
+
 photo1 = openImgURl(nn.getImage(vicini[0]))
 photo2 = openImgURl(nn.getImage(vicini[1]))
 photo3 = openImgURl(nn.getImage(vicini[2]))
@@ -198,24 +217,33 @@ tk.Label(frame3, text="MONUMENTI VICINI",font=("Helvetica", 15,"bold")).pack(sid
 
 im1 = tk.Label(frame3, text=mon1.getName(), relief=tk.RIDGE, width=50, cursor="hand2")
 im1.pack(side=tk.TOP, fill=tk.BOTH)
-im1.bind("<Button-1>", lambda e: callback(vicini[0]))
+im1.bind("<Button-1>", lambda e: callback(site1))
 
-if photo1!= -1: tk.Label(frame3, image=photo1).pack(side=tk.TOP, fill=tk.BOTH)
+if photo1!= -1:
+    i1 = tk.Label(frame3, image=photo1)
+    i1.pack(side=tk.TOP, fill=tk.BOTH)
+    i1.bind("<Button-1>", lambda e: callback(map1))
 else: tk.Label(frame3, text="no image retrieved").pack(side=tk.TOP, fill=tk.BOTH)
 
 im2 = tk.Label(frame3, text=mon2.getName(), relief=tk.RIDGE, width=50, cursor="hand2")
 im2.pack(side=tk.TOP, fill=tk.BOTH)
-im2.bind("<Button-1>", lambda e: callback(vicini[1]))
+im2.bind("<Button-1>", lambda e: callback(site2))
 
-if photo2!= -1: tk.Label(frame3, image=photo2).pack(side=tk.TOP, fill=tk.BOTH)
+if photo2!= -1:
+    i2=tk.Label(frame3, image=photo2)
+    i2.pack(side=tk.TOP, fill=tk.BOTH)
+    i2.bind("<Button-1>", lambda e: callback(map2))
 else:        tk.Label(frame3, text="no image retrieved").pack(side=tk.TOP, fill=tk.BOTH)
 
 
 im3 = tk.Label(frame3, text=mon3.getName(), relief=tk.RIDGE, width=50,cursor="hand2")
 im3.pack(side=tk.TOP, fill=tk.BOTH)
-im3.bind("<Button-1>", lambda e: callback(vicini[2]))
+im3.bind("<Button-1>", lambda e: callback(site3))
 
-if photo3!= -1: tk.Label(frame3, image=photo3).pack(side=tk.TOP, fill=tk.BOTH)
+if photo3!= -1:
+    i3=tk.Label(frame3, image=photo3)
+    i3.pack(side=tk.TOP, fill=tk.BOTH)
+    i3.bind("<Button-1>", lambda e: callback(map3))
 else:        tk.Label(frame3, text="no image retrieved").pack(side=tk.TOP, fill=tk.BOTH)
 
 root.mainloop()

@@ -9,10 +9,8 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
 
 
-from keras.preprocessing import image
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-# scikit-learn k-fold cross-validation
-from numpy import array, indices
+
 import os
 from sklearn.model_selection import StratifiedKFold
 

@@ -1,11 +1,9 @@
-from dataset import Dataset
+
 from keras.models import Sequential
 from keras.layers import Dense
-from sklearn.model_selection import StratifiedKFold
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
 import numpy
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 seed = 7

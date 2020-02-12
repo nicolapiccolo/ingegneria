@@ -5,6 +5,8 @@ import pandas as pd
 import time
 import urllib
 
+from infoMonumento import Info
+
 WD = "https://query.wikidata.org/sparql"
 DB = "http://dbpedia.org/sparql"
 DD = 'monuments.csv'
@@ -25,23 +27,10 @@ class Neighbors:
         bind( replace( str(?geo), "^[^0-9\\\.]*([0-9\\\.]+) .*$", "$1" ) as ?lon )
         bind( replace( str(?geo), "^.* ([0-9\\\.]+)[^0-9\\\.]*$", "$1" ) as ?lat )
         }"""
-        res = self.setQuery(query,WD)
+        res = Info.setQuery(query,WD)
         self.writeCSV(res)
 
 
-
-    def setQuery(self,query, wrapper):
-        sparql = SPARQLWrapper(wrapper)
-        sparql.setQuery(query)
-        sparql.setReturnFormat(JSON)
-        while True:
-            i = 1
-            try:
-                results = sparql.query().convert()
-                return results["results"]["bindings"]
-            except urllib.error.HTTPError:
-                time.sleep(i)
-                i += 1
 
     def writeCSV(self,res):
 
@@ -49,7 +38,7 @@ class Neighbors:
         with f:
             writer = csv.writer(f)
             writer.writerow(['LAT', 'LON', 'URI'])
-            for result in res:
+            for result in res["results"]["bindings"]:
                 lat = result["lat"]["value"]
                 lon = result["lon"]["value"]
                 uri = result["uri"]["value"]
@@ -68,9 +57,9 @@ class Neighbors:
 
     def getImage(self,uri):
         query = f"SELECT ?img  WHERE {{ <{uri}> wdt:P18 ?img }}"
-        res = self.setQuery(query, WD)
+        res = Info.setQuery(query, WD)
         img = ''
-        for result in res:
+        for result in  res["results"]["bindings"]:
             img = result['img']['value']
         print(img)
         return img
@@ -96,33 +85,5 @@ class Neighbors:
         distances.sort(key=lambda x: x[1])
         neighbors = distances[:k]
         return neighbors
-
-
-
-
-#dataset = pd.read_csv('monuments.csv')
-
-#tr = dataset.loc[dataset['URI'] == 'http://www.wikidata.org/entity/Q18068']
-#rint(tr)
-#x_train = dataset.drop('URI', axis=1)
-
-#tr = dataset.loc[[2]]
-
-
-
-
-
-#print(dataset[10])
-#testset_data = iris_data[indices[-n_training_samples:]]
-#testset_labels = iris_labels[indices[-n_training_samples:]]
-
-
-#print(getImage(n[0]['URI'].values[0]))
-#print(getImage(n[0]['URI'].values[0]))
-
-#print(pp.values)
-#print(get_neighbors(dataset,tr,3,distance=distance))
-
-
 
 
