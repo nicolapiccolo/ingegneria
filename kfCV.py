@@ -90,7 +90,7 @@ for train, test in kfold.split(X,Y):
     ])
 
     model.compile(optimizer='adam',
-                  loss='binary_crossentropy',
+                  loss='categorical_crossentropy',
                   metrics=['accuracy'])
 
     total_train = train_generator.samples

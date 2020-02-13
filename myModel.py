@@ -3,11 +3,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
-import numpy
 
-
-seed = 7
-numpy.random.seed(seed)
 
 class MyModel:
 
@@ -36,8 +32,9 @@ class MyModel:
         return self.model
 
     def compileModel(self):
+        #opt = SGD(lr=0.01, momentum=0.9)
         self.model.compile(optimizer='adam',
-                      loss='mean_squared_error',
+                      loss='binary_crossentropy',
                       metrics=['accuracy'])
 
     def fitModel(self):
