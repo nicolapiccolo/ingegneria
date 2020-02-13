@@ -4,7 +4,7 @@ from myModel import MyModel
 
 
 path = "monumenti"
-dataset = Dataset(path,5,3)
+dataset = Dataset(path,3,3)
 
 myModel = MyModel(train=dataset.getTrainImage(),val=dataset.getTestImage(),epochs=20)
 myModel.compileModel()

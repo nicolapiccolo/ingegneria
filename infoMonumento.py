@@ -57,6 +57,14 @@ class Info:
             description = result["descr"]["value"]
         return description
 
+    def getDescriptionEn(self):
+        query = f"select ?descr where {{ ?uri owl:sameAs <{self.uri}>. ?uri dbo:abstract ?descr. FILTER(lang(?descr)='en') }}"
+        print(query)
+        results = self.setQuery(query, DB)
+        description = ''
+        for result in results["results"]["bindings"]:
+            description = result["descr"]["value"]
+        return description
 
     def getUri(self):
         if len(self.uri)==0:

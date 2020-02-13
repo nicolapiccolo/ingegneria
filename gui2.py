@@ -90,7 +90,7 @@ def getAllProps(monumento):
 
 
 root = tk.Tk()
-root.geometry("1100x750")
+root.geometry("1100x650")
 
 
 loaded_model = tf.keras.models.load_model('mymodel.h5')
@@ -103,7 +103,7 @@ frame1.pack(side=tk.LEFT, fill=tk.Y,expand=True)
 #frame2=ScrollableFrame(frame21, width=200,borderwidth=10, relief=tk.GROOVE)
 #frame2.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
 
-canvas = tk.Canvas(root,width=500,background="#1976d2",borderwidth=10, relief=tk.GROOVE)
+canvas = tk.Canvas(root,width=500,borderwidth=10, relief=tk.GROOVE)
 canvas.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
 
 scrollbar = tk.Scrollbar(root, command=canvas.yview)
@@ -144,7 +144,7 @@ imglbl.pack(side=tk.TOP, fill=tk.BOTH,expand=True)
 
 
 
-d = monumento.getDescription()
+d = monumento.getDescription() or monumento.getDescriptionEn()
 tk.Label(frame2, text="DESCRIZIONE: ",font=("Helvetica", 15,"bold")).pack(side=tk.TOP,fill=tk.BOTH)
 w = tk.Message(frame2, text=d,borderwidth=5, relief=tk.RAISED,aspect=120,width=490)
 w.pack(side=tk.TOP,fill=tk.BOTH,expand=True)
