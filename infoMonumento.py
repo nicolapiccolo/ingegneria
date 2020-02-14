@@ -197,16 +197,6 @@ class Info:
         #print(use)
         return diocese
 
-    def getPosition(self):
-        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P276 ?position. ?position rdfs:label ?name. FILTER(lang(?name)='it') }}"
-        #print(query)
-        results = self.setQuery(query, WD)
-        position = ''
-        for result in results["results"]["bindings"]:
-            position+= result["name"]["value"]
-        #print(use)
-        return position
-
     def getCountry(self):
         query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P17 ?country. ?country rdfs:label ?name. FILTER(lang(?name)='it') }}"
         #print(query)
@@ -218,7 +208,7 @@ class Info:
         return country
 
     def getRegion(self):
-        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P131 ?region. ?region rdfs:label ?name. FILTER(lang(?name)='it') }}"
+        query = f"SELECT ?name  WHERE {{ <{self.uri}> wdt:P131 ?region. ?region wdt:P31 wd:Q16110. ?region rdfs:label ?name. FILTER(lang(?name)='it') }}"
         #print(query)
         results = self.setQuery(query, WD)
         region = ''
@@ -233,8 +223,7 @@ class Info:
         results = self.setQuery(query, WD)
         height = ''
         for result in results["results"]["bindings"]:
-            height= result["height"]["value"]
-
+            height= result["height"]["value"] + " m"
         return height
 
     def getWidth(self):
@@ -243,8 +232,7 @@ class Info:
         results = self.setQuery(query, WD)
         width = ''
         for result in results["results"]["bindings"]:
-            width= result["width"]["value"]
-
+            width= result["width"]["value"] +  " m"
         return width
 
     def getWebsite(self):

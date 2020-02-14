@@ -67,6 +67,8 @@ def getAllProps(monumento):
     props = []
 
     props.append(["Indirizzo",monumento.getAddress()])
+    props.append(["Nazione", monumento.getCountry()])
+    props.append(["Regione", monumento.getRegion()])
     props.append(["Cultura",monumento.getCulture()])
     props.append(["Uso" ,monumento.getUse()])
     props.append(["Stile",monumento.getStyle()])
@@ -75,9 +77,6 @@ def getAllProps(monumento):
     props.append(["Religione",monumento.getReligion()])
     props.append(["Diocesi",monumento.getDiocese()])
     props.append(["Materiali usati",monumento.getMaterial()])
-    props.append(["Nazione",monumento.getCountry()])
-    props.append(["Regione",monumento.getRegion()])
-    props.append(["Posizione",monumento.getPosition()])
     props.append(["Data apertura",monumento.getDataOpening()])
     props.append(["Altezza",monumento.getHeight()])
     props.append(["Larghezza",monumento.getWidth()])
@@ -132,8 +131,13 @@ tk.Label(frame1, text=monu,font=("Helvetica", 13,"bold")).pack(side=tk.TOP,fill=
 
 
 
-imglbl = tk.Label(frame1, image=photo)
+imglbl = tk.Label(frame1, image=photo, cursor="hand2")
 imglbl.pack(side=tk.TOP, fill=tk.BOTH,expand=True)
+geo = monumento.getGeolocation()
+map=f"https://maps.google.com/maps?q={geo[0]},{geo[1]}&hl=es;z=14&amp;output=embed"
+imglbl.bind("<Button-1>", lambda e: callback(map))
+
+
 
 
 
@@ -154,16 +158,16 @@ for p in prop:
         frmlbl = tk.Frame(frame2)
         frmlbl.pack(side=tk.TOP, fill=tk.BOTH,expand=True)
 
-        name = tk.Label(frmlbl, text=p[0],relief=tk.RIDGE,borderwidth=2,bg="#63a4ff",font=("Helvetica", 14,"bold"))
+        name = tk.Label(frmlbl, text=p[0]+": ",bg="#63a4ff",font=("Helvetica", 14,"bold"))
         name.grid(row=r,column=0)
 
         if p[0] == "Sito Web":
-            value = tk.Label(frmlbl, text=p[1],relief=tk.RIDGE,cursor="hand2")
+            value = tk.Label(frmlbl, text=p[1],cursor="hand2")
             value.grid(row=r,column=1)
             value.bind("<Button-2>", lambda e: callback(site))
             print(p[1])
         else:
-            value = tk.Label(frmlbl, text=p[1], relief=tk.RIDGE)
+            value = tk.Label(frmlbl, text=p[1],font=("Helvetica", 14))
             value.grid(row=r, column=1)
 r+=1
 
@@ -212,7 +216,7 @@ im1.pack(side=tk.TOP, fill=tk.BOTH)
 im1.bind("<Button-1>", lambda e: callback(site1))
 
 if photo1!= -1:
-    i1 = tk.Label(frame3, image=photo1)
+    i1 = tk.Label(frame3, image=photo1,cursor="hand2")
     i1.pack(side=tk.TOP, fill=tk.BOTH)
     i1.bind("<Button-1>", lambda e: callback(map1))
 else: tk.Label(frame3, text="no image retrieved").pack(side=tk.TOP, fill=tk.BOTH)
@@ -222,7 +226,7 @@ im2.pack(side=tk.TOP, fill=tk.BOTH)
 im2.bind("<Button-1>", lambda e: callback(site2))
 
 if photo2!= -1:
-    i2=tk.Label(frame3, image=photo2)
+    i2=tk.Label(frame3, image=photo2, cursor="hand2")
     i2.pack(side=tk.TOP, fill=tk.BOTH)
     i2.bind("<Button-1>", lambda e: callback(map2))
 else:        tk.Label(frame3, text="no image retrieved").pack(side=tk.TOP, fill=tk.BOTH)
@@ -233,7 +237,7 @@ im3.pack(side=tk.TOP, fill=tk.BOTH)
 im3.bind("<Button-1>", lambda e: callback(site3))
 
 if photo3!= -1:
-    i3=tk.Label(frame3, image=photo3)
+    i3=tk.Label(frame3, image=photo3,cursor="hand2")
     i3.pack(side=tk.TOP, fill=tk.BOTH)
     i3.bind("<Button-1>", lambda e: callback(map3))
 else:        tk.Label(frame3, text="no image retrieved").pack(side=tk.TOP, fill=tk.BOTH)
