@@ -19,7 +19,7 @@ class Dataset:
 
     @classmethod
     def getLabel(cls, index):
-        df = pd.read_csv("label.csv")
+        df = pd.read_csv("monumenti/label.csv")
         return df["Monumenti"][index]
 
     def __init__(self, path, batch_train, batch_val):

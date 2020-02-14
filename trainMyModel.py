@@ -1,5 +1,5 @@
 from dataset import Dataset
-from knn import Neighbors
+from neighbors import Neighbors
 from myModel import MyModel
 
 
@@ -13,7 +13,7 @@ scores = myModel.evaluateModel()
 
 print("%s: %.2f%%" % (myModel.getModel().metrics_names[1], scores[1] * 100))
 
-myModel.getModel().save('mymodel.h5')
+myModel.getModel().save('modello/mymodel.h5')
 
 nn = Neighbors()
 nn.refreshCSV()

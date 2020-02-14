@@ -14,6 +14,32 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import os
 from sklearn.model_selection import StratifiedKFold
 
+
+
+def plotMetric():
+    acc = history.history['accuracy']
+    val_acc = history.history['val_accuracy']
+
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+
+    epochs_range = range(epochs)
+
+    plt.figure(figsize=(8, 8))
+    plt.subplot(1, 2, 1)
+    plt.plot(epochs_range, acc, label='Training Accuracy')
+    plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+    plt.legend(loc='lower right')
+    plt.title('Training and Validation Accuracy')
+
+    plt.subplot(1, 2, 2)
+    plt.plot(epochs_range, loss, label='Training Loss')
+    plt.plot(epochs_range, val_loss, label='Validation Loss')
+    plt.legend(loc='upper right')
+    plt.title('Training and Validation Loss')
+    plt.show()
+
+
 dir_path = "monumenti"
 generator = ImageDataGenerator(
         rescale=1./255,
@@ -22,7 +48,7 @@ generator = ImageDataGenerator(
         horizontal_flip=True)
 
 
-gen = generator.flow_from_directory(dir_path,batch_size=3,shuffle=True,target_size=(64,64),class_mode='categorical')
+gen = generator.flow_from_directory(dir_path,batch_size=5,shuffle=True,target_size=(64,64),class_mode='categorical')
 #val_gen = generator.flow_from_directory(dir_path,batch_size=3,shuffle=True,target_size=(64,64),class_mode='categorical', subset='validation')
 
 X=[]
@@ -90,7 +116,7 @@ for train, test in kfold.split(X,Y):
     ])
 
     model.compile(optimizer='adam',
-                  loss='categorical_crossentropy',
+                  loss='binary_crossentropy',
                   metrics=['accuracy'])
 
     total_train = train_generator.samples
@@ -100,7 +126,7 @@ for train, test in kfold.split(X,Y):
     total_val = test_generator.samples
     batch_val = test_generator.batch_size
 
-    model.fit_generator(
+    history = model.fit_generator(
         train_generator,
         steps_per_epoch=total_train // batch_train,
         epochs=15,
