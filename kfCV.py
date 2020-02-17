@@ -1,10 +1,7 @@
-from SPARQLWrapper import SPARQLWrapper, JSON
 import pandas as pd
 
 import numpy as np
-import scipy as sci
 import matplotlib.pyplot as plt
-import matplotlib.image as mpim
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
 
@@ -23,7 +20,7 @@ def plotMetric():
     loss = history.history['loss']
     val_loss = history.history['val_loss']
 
-    epochs_range = range(epochs)
+    epochs_range = range(20)
 
     plt.figure(figsize=(8, 8))
     plt.subplot(1, 2, 1)
